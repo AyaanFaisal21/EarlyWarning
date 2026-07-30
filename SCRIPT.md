@@ -23,7 +23,8 @@ and each pipeline step now ends with why-this-tool plus the file to open.
 > because to the person it happened to, nothing really happened.
 >
 > And it's only getting worse. Pedestrians struck by workplace vehicles are up **nineteen
-> percent.**
+> percent** — a category notorious for unreported near misses. If you almost get hit, you're
+> thankful, you go about your day. And you wonder who you'd even report it to.
 
 **[scroll: cards]**
 
