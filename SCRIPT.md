@@ -1,9 +1,11 @@
-# Early Warning — read-off script
+# Early Warning — demo script
 
-Trimmed to ~2:05 spoken, ~2:15 with the pauses. Scroll cues in brackets.
-Your wording, tightened — nothing here is a claim we can't defend.
+Structured against the three judging criteria. ~2:30 spoken.
+Scroll cues in brackets. Files to open in **§3**.
 
 ---
+
+# 1 · THE PROBLEM
 
 **[hero — don't scroll yet]**
 
@@ -22,53 +24,94 @@ Your wording, tightened — nothing here is a claim we can't defend.
 > The National Safety Council says three quarters of workplace accidents were preceded by a
 > near miss. A warning. And **ninety percent of those warnings are never reported** —
 > because to the person it happened to, nothing really happened.
->
-> That's what a near miss is. An event where nobody gets hurt, but one that often comes
-> before an accident.
 
 **[scroll: cards]**
 
+> That's what a near miss is. An event where nobody gets hurt, but one that often comes
+> before an accident.
+>
 > And it's getting worse. Pedestrians struck by workplace vehicles are up **nineteen
-> percent** — a category notorious for unreported near misses. If you almost get hit,
-> you're thankful, you go about your day. And you wonder who you'd even report it to.
+> percent**. If you almost get hit, you're thankful, you go about your day — and you wonder
+> who you'd even report it to.
 >
 > Meanwhile autonomous machinery is arriving on those same floors, causing the same near
 > misses, reporting none of them — leaving only footage.
 
 **[scroll: the problem, and what it costs]**
 
-> That's right. Footage is everywhere. It's just that nobody can watch it, and nobody knows
-> what to look for.
+> That's right. Footage is everywhere. Nobody can watch it, and nobody knows what to look
+> for. **Early Warning watches.**
+
+---
+
+# 2 · THE TECH STACK
+
+*Say the enabling claim, not just the name. This is the criterion they're scoring.*
+
+**[scroll: pipeline]**
+
+> Four technologies, and each one does something the others structurally cannot.
+
+**[step 01]**
+
+> **TwelveLabs.** The signal here is entirely visual — proximity, guarding, whether someone
+> crossed a walkway. There is no transcript. A speech model reads nothing.
+> **Without it there is no input at all.**
+
+**[step 02]**
+
+> Real CCTV on the left, a rendered simulation on the right. They look nothing alike and
+> produce the **same fingerprint**, because we hash what the extractor found, not what the
+> frame looked like.
 >
-> **Early Warning watches.**
+> We tried embeddings first. They failed — everything sat at 0.98 similarity.
+> **Structure worked where appearance couldn't.**
+
+**[step 03]**
+
+> **Neo4j.** Every question here is about what's *absent* — which patterns produced no
+> report. Ask a vector database and it hands you the nearest thing that exists.
+> **Only a graph can count what isn't there.**
+
+**[step 04]**
+
+> **OpenAI** reads the assembled subgraph — never a video frame — and writes a brief with a
+> named cause and one action. **Without the graph there'd be nothing to reason over.**
+>
+> And **Strands** runs two agents: one enforcing that structured output, one with the graph
+> exposed as tools. **That's what lets it write its own Cypher.**
 
 ---
 
-**[step 01 card]**
+# 3 · LIVE DEMO + CODE
 
-> First, TwelveLabs — because the content is entirely visual. It reads what's happening
-> against a closed vocabulary: what would need to change for someone to get hurt, and how
-> plausible that outcome is.
+## The live bit — ask the graph a question
 
-**[step 02 card]**
+```bash
+python src/agent.py "Which hazard patterns produced no report at all?"
+```
 
-> Then we compare real near misses against rendered simulations that look nothing alike —
-> and get the **same fingerprint**, because we hash what the extractor found, not what the
-> frame looked like. That lets us line up a simulated accident with the near misses next to
-> it.
+> Nobody wrote this query. It reads the real schema first, composes the Cypher, and runs it.
 
-**[step 03 card]**
+**Expected answer:** 46 unreported patterns; biggest is *forklift — vehicle pedestrian
+proximity, no segregated walkway*, fingerprint `5649abdb63e19bdf`, **17 events**.
 
-> Now Neo4j connects it. Every question here is about what's **absent** — which patterns
-> produced no report. Ask a vector database and it hands you the nearest thing that exists.
-> We need a graph, because **only a graph can count what isn't there.**
+⚠️ Takes ~20s. If the room is tight, show the saved output instead and say so.
 
-**[step 04 card]**
+## Four files, in this order
 
-> Finally OpenAI reads the assembled subgraph — never a video frame — and writes a brief for
-> a safety manager: a named cause, and an action they can actually put out.
+| # | File | What to say |
+|---|---|---|
+| 1 | **`src/extraction.py`** — `EVENT_SCHEMA` | "Every field is an enum. Free text here and 'forklift near pedestrian' and 'pedestrian close to a forklift' become different things — cross-video grouping dies at the first clip." |
+| 2 | **`src/loader.py`** — `fingerprint()` | "Twelve lines, no vendor. Hash the hazard, the absent controls, the actors. That's why a real clip and a simulation collapse to one pattern." |
+| 3 | **`queries.cypher`** — the reporting gap | "`NOT (e)-[:GENERATED]->(:Report)` — a negation over a relationship. This is the query a vector database cannot express." |
+| 4 | **`src/agent.py`** — the tools | "`get_graph_schema` exists because models invent labels. It reads what's actually there before writing anything." |
+
+*If you only get one: **`fingerprint()`**. Twelve lines carrying the whole argument.*
 
 ---
+
+# CLOSE
 
 **[scroll: future]**
 
@@ -79,48 +122,27 @@ Your wording, tightened — nothing here is a claim we can't defend.
 
 ---
 
-## What changed from your draft
+## If you're long
 
-| | |
-|---|---|
-| **−22 words** | Kept one side of the "you're thankful" line. The second half already carries both perspectives |
-| **−15** | Neo4j paragraph: one example question instead of two, and your missing clause filled in |
-| **−12** | Autonomous machinery compressed into one sentence, which also cleans the pivot |
-| **−10** | Close trimmed — it was doing two jobs |
-| **−4** | Dropped "warehouse and workplace" from the money line; unqualified is stronger |
-| **wording** | *"usually precedes an accident"* → *"often comes before one."* The strong version is Heinrich's causal chain, which is discredited — this is the one line an EHS-literate judge could push on |
-
-**Protected deliberately:** the "you're thankful, you go about your day" line — it explains
-non-reporting better than the 90% figure does, and it's the only moment the audience
-recognises themselves. And "Footage is everywhere… Early Warning watches" — 20 words doing
-the entire problem-to-product pivot.
-
----
-
-## If you're still long
-
-Cut the step 02 paragraph entirely (−45 words, ~18s). The fingerprint story is the most
-technically impressive thing you have, but it's the only section the argument survives
-without.
+Cut step 02's embeddings sentence and the fourth file. Keeps all three criteria covered.
 
 ---
 
 ## If asked
 
 **"How accurate is it?"**
-High recall on hazard presence. Measured against a labelled CCTV set we got ~51% precision —
-but those labels encode *human compliance*, whether a worker stayed inside a painted line,
-which is a different question from whether a machine did something unexpected. We don't
-claim compliance classification. It ranks a review queue; a human closes the loop.
+High recall on hazard presence. Against a labelled CCTV set we got ~51% precision — but
+those labels encode *human compliance*, whether a worker stayed inside a painted line, which
+is a different question from whether a machine did something unexpected. We don't claim
+compliance classification. It ranks a review queue; a human closes the loop.
+
+**"Where's AWS?"**
+The graph runs on Neo4j Aura, hosted on EC2 in us-east-1. Strands is AWS's agent SDK and
+runs two agents here. Bedrock is validated and wired next — we ran out of clock.
 
 **"Isn't this surveillance?"**
-The unit of analysis is the hazard, never the person. No identification, no
-re-identification, no worker-level metrics. The output names a missing barrier, not a worker.
-
-**"Why not just a vector database?"**
-Every headline query is absence, negation, or exhaustive counting — set operations. And we
-measured it: embeddings couldn't even separate our two corpora, 0.98 similarity within
-versus 0.88 across.
+The unit of analysis is the hazard, never the person. No identification, no worker-level
+metrics. The output names a missing barrier.
 
 **"Is the data real?"**
 Both. Real factory CCTV under CC BY, plus NVIDIA's openly licensed simulation set. What
@@ -128,13 +150,13 @@ you're seeing is a completed pipeline run over 79 clips.
 
 **"All accidents start as near misses, right?"**
 Careful — that's Heinrich's pyramid, and it's discredited. Minor injuries fell for decades
-while fatalities didn't. That's *why* the field moved to SIF potential, and why we rank by
+while fatalities didn't. That's why the field moved to SIF potential, and why we rank by
 what could have killed someone rather than by count.
 
-**"Who actually acts on this?"**
-The EHS manager takes it to the safety committee; maintenance installs the control. Then the
-loop closes — we keep counting, so if the pattern drops you know the fix worked. No manual
-near-miss programme can tell you that, because the events were never counted to begin with.
+**"Who acts on it?"**
+EHS manager → safety committee → maintenance installs the control. Then the loop closes: we
+keep counting, so if the pattern drops you know the fix worked. No manual programme can tell
+you that, because the events were never counted to begin with.
 
 ---
 
@@ -142,8 +164,8 @@ near-miss programme can tell you that, because the events were never counted to 
 
 | Claim | Source |
 |---|---|
-| >$1B/week direct workers' comp | Liberty Mutual Workplace Safety Index 2025 (2022 data) |
+| >$1B/week direct workers' comp | Liberty Mutual Workplace Safety Index 2025 |
 | 5,070 fatal work injuries, 2024 | BLS Census of Fatal Occupational Injuries |
-| Pedestrians struck by vehicles +19% (369, up from 310) | BLS, same |
+| Pedestrians struck by vehicles +19% | BLS, same |
 | 90% of near misses unreported | Benchmark Gensuite 2026 EHS Benchmarking Report |
 | 75% of accidents preceded by a near miss | National Safety Council |
