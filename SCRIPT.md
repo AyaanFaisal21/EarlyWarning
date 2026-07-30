@@ -52,6 +52,11 @@ claim is one we can defend if challenged.
 >
 > We tried matching them on embeddings first. It failed — everything sat at 0.98
 > similarity. Structure worked where appearance didn't.
+>
+> And the simulations do something else for us. Our extractor writes down what *would* have
+> had to change for someone to get hurt. The simulation set shows that same configuration
+> with less margin left — **the counterfactual, rendered.** One of them has a person seated
+> on the forks of a moving forklift. Same hazard, no margin.
 
 *[step 03 card]*
 
