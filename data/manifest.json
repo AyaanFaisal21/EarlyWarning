@@ -1,0 +1,402 @@
+[
+  {
+    "file": "data/0_tr128.mp4",
+    "filename": "0_tr128.mp4",
+    "ground_truth_label": "safe_walkway_violation",
+    "is_unsafe": true,
+    "paired_class": "safe_walkway",
+    "split": "train",
+    "size_bytes": 3021735,
+    "duration_sec": 10.4
+  },
+  {
+    "file": "data/0_tr144.mp4",
+    "filename": "0_tr144.mp4",
+    "ground_truth_label": "safe_walkway_violation",
+    "is_unsafe": true,
+    "paired_class": "safe_walkway",
+    "split": "train",
+    "size_bytes": 3038316,
+    "duration_sec": 10.5
+  },
+  {
+    "file": "data/0_tr143.mp4",
+    "filename": "0_tr143.mp4",
+    "ground_truth_label": "safe_walkway_violation",
+    "is_unsafe": true,
+    "paired_class": "safe_walkway",
+    "split": "train",
+    "size_bytes": 3120796,
+    "duration_sec": 10.5
+  },
+  {
+    "file": "data/0_tr129.mp4",
+    "filename": "0_tr129.mp4",
+    "ground_truth_label": "safe_walkway_violation",
+    "is_unsafe": true,
+    "paired_class": "safe_walkway",
+    "split": "train",
+    "size_bytes": 3140233,
+    "duration_sec": 10.4
+  },
+  {
+    "file": "data/0_tr131.mp4",
+    "filename": "0_tr131.mp4",
+    "ground_truth_label": "safe_walkway_violation",
+    "is_unsafe": true,
+    "paired_class": "safe_walkway",
+    "split": "train",
+    "size_bytes": 3700093,
+    "duration_sec": 10.4
+  },
+  {
+    "file": "data/1_tr61.mp4",
+    "filename": "1_tr61.mp4",
+    "ground_truth_label": "unauthorized_intervention",
+    "is_unsafe": true,
+    "paired_class": "authorized_intervention",
+    "split": "train",
+    "size_bytes": 3116192,
+    "duration_sec": 10.4
+  },
+  {
+    "file": "data/1_tr66.mp4",
+    "filename": "1_tr66.mp4",
+    "ground_truth_label": "unauthorized_intervention",
+    "is_unsafe": true,
+    "paired_class": "authorized_intervention",
+    "split": "train",
+    "size_bytes": 4544481,
+    "duration_sec": 10.4
+  },
+  {
+    "file": "data/1_tr65.mp4",
+    "filename": "1_tr65.mp4",
+    "ground_truth_label": "unauthorized_intervention",
+    "is_unsafe": true,
+    "paired_class": "authorized_intervention",
+    "split": "train",
+    "size_bytes": 4593144,
+    "duration_sec": 10.4
+  },
+  {
+    "file": "data/1_tr62.mp4",
+    "filename": "1_tr62.mp4",
+    "ground_truth_label": "unauthorized_intervention",
+    "is_unsafe": true,
+    "paired_class": "authorized_intervention",
+    "split": "train",
+    "size_bytes": 4686165,
+    "duration_sec": 10.4
+  },
+  {
+    "file": "data/1_tr64.mp4",
+    "filename": "1_tr64.mp4",
+    "ground_truth_label": "unauthorized_intervention",
+    "is_unsafe": true,
+    "paired_class": "authorized_intervention",
+    "split": "train",
+    "size_bytes": 5348440,
+    "duration_sec": 10.4
+  },
+  {
+    "file": "data/2_te12.mp4",
+    "filename": "2_te12.mp4",
+    "ground_truth_label": "opened_panel_cover",
+    "is_unsafe": true,
+    "paired_class": "closed_panel_cover",
+    "split": "test",
+    "size_bytes": 3276638,
+    "duration_sec": 10.4
+  },
+  {
+    "file": "data/2_tr123.mp4",
+    "filename": "2_tr123.mp4",
+    "ground_truth_label": "opened_panel_cover",
+    "is_unsafe": true,
+    "paired_class": "closed_panel_cover",
+    "split": "train",
+    "size_bytes": 4066343,
+    "duration_sec": 10.4
+  },
+  {
+    "file": "data/2_tr124.mp4",
+    "filename": "2_tr124.mp4",
+    "ground_truth_label": "opened_panel_cover",
+    "is_unsafe": true,
+    "paired_class": "closed_panel_cover",
+    "split": "train",
+    "size_bytes": 5924464,
+    "duration_sec": 10.4
+  },
+  {
+    "file": "data/2_tr23.mp4",
+    "filename": "2_tr23.mp4",
+    "ground_truth_label": "opened_panel_cover",
+    "is_unsafe": true,
+    "paired_class": "closed_panel_cover",
+    "split": "train",
+    "size_bytes": 6888889,
+    "duration_sec": 4.0
+  },
+  {
+    "file": "data/2_tr24.mp4",
+    "filename": "2_tr24.mp4",
+    "ground_truth_label": "opened_panel_cover",
+    "is_unsafe": true,
+    "paired_class": "closed_panel_cover",
+    "split": "train",
+    "size_bytes": 6924141,
+    "duration_sec": 4.0
+  },
+  {
+    "file": "data/3_tr40.mp4",
+    "filename": "3_tr40.mp4",
+    "ground_truth_label": "carrying_overload_forklift",
+    "is_unsafe": true,
+    "paired_class": "safe_carrying",
+    "split": "train",
+    "size_bytes": 9211837,
+    "duration_sec": 4.0
+  },
+  {
+    "file": "data/3_tr41.mp4",
+    "filename": "3_tr41.mp4",
+    "ground_truth_label": "carrying_overload_forklift",
+    "is_unsafe": true,
+    "paired_class": "safe_carrying",
+    "split": "train",
+    "size_bytes": 9409286,
+    "duration_sec": 4.0
+  },
+  {
+    "file": "data/3_tr38.mp4",
+    "filename": "3_tr38.mp4",
+    "ground_truth_label": "carrying_overload_forklift",
+    "is_unsafe": true,
+    "paired_class": "safe_carrying",
+    "split": "train",
+    "size_bytes": 9570296,
+    "duration_sec": 4.0
+  },
+  {
+    "file": "data/3_tr37.mp4",
+    "filename": "3_tr37.mp4",
+    "ground_truth_label": "carrying_overload_forklift",
+    "is_unsafe": true,
+    "paired_class": "safe_carrying",
+    "split": "train",
+    "size_bytes": 9624823,
+    "duration_sec": 4.0
+  },
+  {
+    "file": "data/3_tr36.mp4",
+    "filename": "3_tr36.mp4",
+    "ground_truth_label": "carrying_overload_forklift",
+    "is_unsafe": true,
+    "paired_class": "safe_carrying",
+    "split": "train",
+    "size_bytes": 9683731,
+    "duration_sec": 4.0
+  },
+  {
+    "file": "data/4_tr13.mp4",
+    "filename": "4_tr13.mp4",
+    "ground_truth_label": "safe_walkway",
+    "is_unsafe": false,
+    "paired_class": "safe_walkway_violation",
+    "split": "train",
+    "size_bytes": 3240413,
+    "duration_sec": 10.4
+  },
+  {
+    "file": "data/4_te5.mp4",
+    "filename": "4_te5.mp4",
+    "ground_truth_label": "safe_walkway",
+    "is_unsafe": false,
+    "paired_class": "safe_walkway_violation",
+    "split": "test",
+    "size_bytes": 4217183,
+    "duration_sec": 10.4
+  },
+  {
+    "file": "data/4_tr15.mp4",
+    "filename": "4_tr15.mp4",
+    "ground_truth_label": "safe_walkway",
+    "is_unsafe": false,
+    "paired_class": "safe_walkway_violation",
+    "split": "train",
+    "size_bytes": 4490936,
+    "duration_sec": 10.4
+  },
+  {
+    "file": "data/4_tr14.mp4",
+    "filename": "4_tr14.mp4",
+    "ground_truth_label": "safe_walkway",
+    "is_unsafe": false,
+    "paired_class": "safe_walkway_violation",
+    "split": "train",
+    "size_bytes": 4802972,
+    "duration_sec": 10.4
+  },
+  {
+    "file": "data/4_te6.mp4",
+    "filename": "4_te6.mp4",
+    "ground_truth_label": "safe_walkway",
+    "is_unsafe": false,
+    "paired_class": "safe_walkway_violation",
+    "split": "test",
+    "size_bytes": 5016344,
+    "duration_sec": 10.4
+  },
+  {
+    "file": "data/5_tr19.mp4",
+    "filename": "5_tr19.mp4",
+    "ground_truth_label": "authorized_intervention",
+    "is_unsafe": false,
+    "paired_class": "unauthorized_intervention",
+    "split": "train",
+    "size_bytes": 4946801,
+    "duration_sec": 10.4
+  },
+  {
+    "file": "data/5_tr18.mp4",
+    "filename": "5_tr18.mp4",
+    "ground_truth_label": "authorized_intervention",
+    "is_unsafe": false,
+    "paired_class": "unauthorized_intervention",
+    "split": "train",
+    "size_bytes": 5076020,
+    "duration_sec": 10.4
+  },
+  {
+    "file": "data/5_tr17.mp4",
+    "filename": "5_tr17.mp4",
+    "ground_truth_label": "authorized_intervention",
+    "is_unsafe": false,
+    "paired_class": "unauthorized_intervention",
+    "split": "train",
+    "size_bytes": 5230203,
+    "duration_sec": 10.4
+  },
+  {
+    "file": "data/5_te13.mp4",
+    "filename": "5_te13.mp4",
+    "ground_truth_label": "authorized_intervention",
+    "is_unsafe": false,
+    "paired_class": "unauthorized_intervention",
+    "split": "test",
+    "size_bytes": 5432185,
+    "duration_sec": 10.4
+  },
+  {
+    "file": "data/5_te12.mp4",
+    "filename": "5_te12.mp4",
+    "ground_truth_label": "authorized_intervention",
+    "is_unsafe": false,
+    "paired_class": "unauthorized_intervention",
+    "split": "test",
+    "size_bytes": 5446207,
+    "duration_sec": 10.4
+  },
+  {
+    "file": "data/6_te12.mp4",
+    "filename": "6_te12.mp4",
+    "ground_truth_label": "closed_panel_cover",
+    "is_unsafe": false,
+    "paired_class": "opened_panel_cover",
+    "split": "test",
+    "size_bytes": 2979560,
+    "duration_sec": 10.4
+  },
+  {
+    "file": "data/6_tr16.mp4",
+    "filename": "6_tr16.mp4",
+    "ground_truth_label": "closed_panel_cover",
+    "is_unsafe": false,
+    "paired_class": "opened_panel_cover",
+    "split": "train",
+    "size_bytes": 5180128,
+    "duration_sec": 10.5
+  },
+  {
+    "file": "data/6_te11.mp4",
+    "filename": "6_te11.mp4",
+    "ground_truth_label": "closed_panel_cover",
+    "is_unsafe": false,
+    "paired_class": "opened_panel_cover",
+    "split": "test",
+    "size_bytes": 5908475,
+    "duration_sec": 10.4
+  },
+  {
+    "file": "data/6_tr17.mp4",
+    "filename": "6_tr17.mp4",
+    "ground_truth_label": "closed_panel_cover",
+    "is_unsafe": false,
+    "paired_class": "opened_panel_cover",
+    "split": "train",
+    "size_bytes": 5921280,
+    "duration_sec": 10.4
+  },
+  {
+    "file": "data/6_te4.mp4",
+    "filename": "6_te4.mp4",
+    "ground_truth_label": "closed_panel_cover",
+    "is_unsafe": false,
+    "paired_class": "opened_panel_cover",
+    "split": "test",
+    "size_bytes": 6358610,
+    "duration_sec": 4.0
+  },
+  {
+    "file": "data/7_te4.mp4",
+    "filename": "7_te4.mp4",
+    "ground_truth_label": "safe_carrying",
+    "is_unsafe": false,
+    "paired_class": "carrying_overload_forklift",
+    "split": "test",
+    "size_bytes": 2396553,
+    "duration_sec": 4.0
+  },
+  {
+    "file": "data/7_te3.mp4",
+    "filename": "7_te3.mp4",
+    "ground_truth_label": "safe_carrying",
+    "is_unsafe": false,
+    "paired_class": "carrying_overload_forklift",
+    "split": "test",
+    "size_bytes": 2440216,
+    "duration_sec": 4.0
+  },
+  {
+    "file": "data/7_tr12.mp4",
+    "filename": "7_tr12.mp4",
+    "ground_truth_label": "safe_carrying",
+    "is_unsafe": false,
+    "paired_class": "carrying_overload_forklift",
+    "split": "train",
+    "size_bytes": 2824701,
+    "duration_sec": 4.0
+  },
+  {
+    "file": "data/7_tr13.mp4",
+    "filename": "7_tr13.mp4",
+    "ground_truth_label": "safe_carrying",
+    "is_unsafe": false,
+    "paired_class": "carrying_overload_forklift",
+    "split": "train",
+    "size_bytes": 2847117,
+    "duration_sec": 4.0
+  },
+  {
+    "file": "data/7_tr11.mp4",
+    "filename": "7_tr11.mp4",
+    "ground_truth_label": "safe_carrying",
+    "is_unsafe": false,
+    "paired_class": "carrying_overload_forklift",
+    "split": "train",
+    "size_bytes": 2956468,
+    "duration_sec": 4.1
+  }
+]
