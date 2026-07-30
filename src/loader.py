@@ -18,7 +18,7 @@ AUTH = (
 
 
 def fingerprint(event: dict[str, Any]) -> str:
-    """The grouping key — a subgraph signature, not a point in embedding space.
+    """-The grouping key — a subgraph signature, not a point in embedding space.
 
     This is the whole argument for using a graph here. Two events belong to the same pattern
     when they share a causal structure: same hazard, same absent controls, same actor types.

@@ -62,10 +62,19 @@ def get_graph_schema() -> str:
 
 @tool
 def run_cypher(query: str) -> str:
-    """Execute a read-only Cypher query and return rows as JSON.
+    """PRIMARY TOOL. Execute a read-only Cypher query and return rows as JSON.
 
-    Use for counting, filtering, absence tests (NOT (e)-[:GENERATED]->(:Report)) and
-    multi-hop traversal. Writes are rejected."""
+    Use this for almost everything: counting, filtering, ranking, absence tests, and
+    multi-hop traversal. In particular, questions about what is MISSING or what produced
+    NO report are answered here, with a negation:
+
+        MATCH (p:Pattern)<-[:INSTANCE_OF]-(e:Event)
+        OPTIONAL MATCH (e)-[:GENERATED]->(r:Report)
+        WITH p, count(e) AS seen, count(r) AS filed
+        WHERE filed = 0
+        RETURN p.title, seen ORDER BY seen DESC
+
+    Call get_graph_schema first if you have not already. Writes are rejected."""
     lowered = query.lower()
     if any(w in lowered for w in ("create", "merge", "delete", "set ", "remove", "drop")):
         return "Refused: read-only."
@@ -77,9 +86,12 @@ def run_cypher(query: str) -> str:
 
 @tool
 def deviance_drift(split_iso: str = "2026-06-29T00:00:00Z") -> str:
-    """Find patterns showing normalization of deviance: occurrences rising while the safety
-    margin shrinks and the report rate falls. split_iso divides the prior and recent
-    windows."""
+    """TREND ANALYSIS ONLY — compares two time windows.
+
+    Use this ONLY when asked whether something is getting worse or changing over time.
+    Do NOT use it to find unreported patterns, to count anything, or to answer any
+    question about the current state of the graph — use run_cypher for those.
+    Requires timestamps and returns nothing when the data has no meaningful time axis."""
     cypher = """
     MATCH (p:Pattern)<-[:INSTANCE_OF]-(e:Event)
     OPTIONAL MATCH (e)-[:GENERATED]->(r:Report)
