@@ -1,0 +1,14 @@
+__pycache__/
+*.pyc
+.env
+fixtures/
+.venv/
+
+# footage is large and re-fetchable; the labels and citation are not
+data/*.mp4
+data/*.part
+!data/manifest.json
+!data/CITATION.txt
+
+# working notes on alternative concepts — kept locally, not part of the product
+notes/
