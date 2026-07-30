@@ -30,20 +30,32 @@ from taxonomy import (
     SIF_POTENTIAL,
 )
 
-PROMPT = """You are a workplace safety officer reviewing factory floor camera footage.
+PROMPT = """You are a safety officer reviewing factory CCTV, deciding which moments are
+worth filing as near-miss reports.
 
-Identify every situation in this clip where a person could plausibly have been injured if
-timing, positioning, or conditions had been slightly different.
+A near miss is an EVENT, not a condition. Something has to have happened: a person and a
+source of harm came into unintended proximity at a specific moment, because a normal
+separation or barrier was absent or breached, and only timing, position or luck prevented
+an injury.
 
-Nothing bad will appear to happen. That is expected and is exactly the point — a near miss
-is an event where no one was hurt but harm was plausible. Report the hazardous situation
-anyway. Powered equipment moving near people on foot, loads carried overhead or above safe
-height, people reaching into running machinery, and machines running with guards or panels
-open are all reportable, even when the clip ends uneventfully.
+Identify every situation where a person could plausibly have been injured had timing,
+positioning, or conditions been slightly different. In particular:
+  - a person on foot in or near the path of moving powered equipment
+  - a person within reach of a moving part while a guard or access panel is open
+  - a load carried, lifted, or moved over or beside a person
+  - a person reaching into, leaning over, or contacting equipment that is running
 
-Only return an empty list if the clip shows no people and no moving equipment at all.
+Nothing bad will appear to happen — that is expected, and is exactly what makes these go
+unreported. Report the situation anyway.
 
-For each situation, state what would have had to change for someone to be hurt.
+Only return an empty list if the clip shows no people, or no equipment in motion at all.
+
+For each event you do report, you must name:
+  - deviation: what departed from normal, expected operation at that moment
+  - counterfactual: the small change in timing or position that would have caused injury
+
+If you cannot name a specific deviation, do not report the event. Vague unease about the
+general environment is not a deviation.
 
 Do not estimate distances numerically. Choose a proximity band."""
 
@@ -74,9 +86,16 @@ EVENT_SCHEMA: dict[str, Any] = {
                     "enum": SIF_POTENTIAL,
                     "description": "worst plausible outcome had conditions differed slightly",
                 },
+                "deviation": {
+                    "type": "string",
+                    "description": "what departed from normal, expected operation at this "
+                    "moment. Required — an event with no nameable deviation is not a near "
+                    "miss and should not be reported at all.",
+                },
                 "counterfactual": {
                     "type": "string",
-                    "description": "what would have had to change for someone to be hurt",
+                    "description": "the small change in timing or position that would have "
+                    "caused an injury",
                 },
             },
             "required": [
@@ -88,6 +107,7 @@ EVENT_SCHEMA: dict[str, Any] = {
                 "missing_controls",
                 "proximity_band",
                 "sif_potential",
+                "deviation",
                 "counterfactual",
             ],
         }

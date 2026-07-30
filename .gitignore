@@ -12,3 +12,12 @@ data/*.part
 
 # working notes on alternative concepts — kept locally, not part of the product
 notes/
+
+# NVIDIA PhysicalAI shards — 1.1 GB+, re-fetchable via src/fetch_nvidia.py
+data_nvidia/
+
+# landing page build artefacts
+EWLandingPage/node_modules/
+EWLandingPage/.next/
+EWLandingPage/out/
+EWLandingPage/.vercel/

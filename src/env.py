@@ -31,7 +31,11 @@ def load(path: pathlib.Path = ENV_FILE, override: bool = False) -> list[str]:
         if not line or line.startswith("#") or "=" not in line:
             continue
         key, _, value = line.partition("=")
-        key, value = key.strip(), value.strip().strip("'\"")
+        # AWS and most consoles hand you `export KEY=value` lines. Accept them as-is
+        # rather than making people strip the prefix by hand — pasting the block
+        # verbatim is the whole point of the file.
+        key = key.strip().removeprefix("export ").strip()
+        value = value.strip().strip("'\"")
         if key and (override or key not in os.environ):
             os.environ[key] = value
             loaded.append(key)
