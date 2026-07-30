@@ -1,7 +1,7 @@
 'use client'
 
 import { HazardFrame } from '@/components/HazardFrame'
-import { remap } from '@/lib/useScrollProgress'
+import { band, reveal } from '@/lib/timeline'
 
 /**
  * The three-tier severity ladder, revealed one card at a time as the reader scrolls.
@@ -61,16 +61,12 @@ const TIERS: Tier[] = [
 ]
 
 // Each card starts its entrance a little after the previous one.
-const FIRST_AT = 0.37
-const STAGGER = 0.04
-const RAMP = 0.04
-const FADE_OUT_AT = 0.48
+const FIRST_AT = 0.54
+const STAGGER = 0.025
 
 export function DefinitionCards({ progress }: { progress: number }) {
   // Fades out to hand the stage to the pipeline, otherwise both render at once.
-  const sectionOpacity =
-    remap(progress, FIRST_AT - 0.04, FIRST_AT, 0, 1) *
-    (1 - remap(progress, FADE_OUT_AT, FADE_OUT_AT + 0.04, 0, 1))
+  const sectionOpacity = band(progress, 'cards')
 
   return (
     <div
@@ -92,8 +88,7 @@ export function DefinitionCards({ progress }: { progress: number }) {
 
         <div className="grid items-stretch gap-5 md:grid-cols-3">
           {TIERS.map((tier, i) => {
-            const start = FIRST_AT + i * STAGGER
-            const t = remap(progress, start, start + RAMP, 0, 1)
+            const t = reveal(progress, 'cards', FIRST_AT + i * STAGGER)
 
             const body = (
               <div

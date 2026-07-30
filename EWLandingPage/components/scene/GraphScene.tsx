@@ -44,7 +44,7 @@ function CameraRig({ progress }: { progress: number }) {
   const target = useRef(new THREE.Vector3())
 
   useFrame((state) => {
-    const t = remap(progress, 0, 0.18, 0, 1)
+    const t = remap(progress, 0, 0.12, 0, 1)
 
     // Idle drift accumulates without bound off elapsedTime, so by the time someone
     // scrolls the orbit angle can be several turns past where it started. Lerping that raw
@@ -75,7 +75,7 @@ function CameraRig({ progress }: { progress: number }) {
 export function GraphScene({ progress }: { progress: number }) {
   // Fade the lines to black over the same window the tiles are settling in, so the 3D
   // surface and the 2D backdrop arrive at the same colour together.
-  const k = remap(progress, 0.09, 0.18, 0, 1)
+  const k = remap(progress, 0.06, 0.12, 0, 1)
   const cell = CELL_FROM.clone().lerp(CELL_TO, k)
   const section = SECTION_FROM.clone().lerp(CELL_TO, k)
 

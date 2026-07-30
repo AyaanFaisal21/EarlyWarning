@@ -1,7 +1,7 @@
 'use client'
 
 import { HazardFrame } from '@/components/HazardFrame'
-import { remap } from '@/lib/useScrollProgress'
+import { band } from '@/lib/timeline'
 
 /**
  * The closer: why this gets harder, not easier.
@@ -11,7 +11,7 @@ import { remap } from '@/lib/useScrollProgress'
  * sees both parties in the same frame is the camera that is already up there.
  */
 
-export const FUTURE_AT = 0.92
+
 
 const FACTS = [
   {
@@ -29,7 +29,7 @@ const FACTS = [
 ]
 
 export function FutureSection({ progress }: { progress: number }) {
-  const opacity = remap(progress, FUTURE_AT - 0.03, FUTURE_AT, 0, 1)
+  const opacity = band(progress, 'future')
 
   return (
     <div
@@ -46,11 +46,16 @@ export function FutureSection({ progress }: { progress: number }) {
       }}
     >
       <div className="mx-auto w-full" style={{ maxWidth: 1000 }}>
-        <p className="text-xs uppercase tracking-[0.22em] text-white/35">
-          Why this gets harder
+        {/* The opening section already CLAIMED that autonomous machinery makes this worse.
+            This is where the claim gets paid off, so it opens by pointing back at it. */}
+        <p className="text-lg leading-relaxed text-white/55 md:text-xl">
+          You think this is just about what&apos;s happening now?
+        </p>
+        <p className="mt-2 text-lg leading-relaxed text-white/55 md:text-xl">
+          Take a look at what&apos;s slated for workplaces.
         </p>
 
-        <h3 className="mt-4 max-w-3xl text-4xl font-bold leading-tight tracking-tight text-white md:text-5xl">
+        <h3 className="mt-8 max-w-3xl text-4xl font-bold leading-tight tracking-tight text-white md:text-5xl">
           The floor is about to fill with machines that don&apos;t file reports either.
         </h3>
 

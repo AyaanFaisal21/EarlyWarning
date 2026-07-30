@@ -38,7 +38,7 @@ export function TileField({ progress, cols = 16, rows = 10 }: {
     return out
   }, [cols, rows])
 
-  const settled = progress > 0.15
+  const settled = progress > 0.10
 
   return (
     <div

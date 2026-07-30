@@ -1,7 +1,7 @@
 'use client'
 
 import { HazardFrame } from '@/components/HazardFrame'
-import { remap } from '@/lib/useScrollProgress'
+import { band } from '@/lib/timeline'
 
 /**
  * Slot for the recorded walkthrough.
@@ -15,7 +15,7 @@ import { remap } from '@/lib/useScrollProgress'
  * can fail on venue wifi.
  */
 
-export const DEMO_AT = 0.82
+
 
 const BEATS = [
   'Raw CCTV going in — the clip nobody would have watched',
@@ -34,9 +34,7 @@ export function DemoSection({
   src?: string
   graphUrl?: string
 }) {
-  const opacity =
-    remap(progress, DEMO_AT - 0.03, DEMO_AT, 0, 1) *
-    (1 - remap(progress, 0.9, 0.93, 0, 1))
+  const opacity = band(progress, 'demo')
 
   return (
     <div

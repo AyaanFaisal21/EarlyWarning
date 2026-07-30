@@ -5,7 +5,8 @@ import { Manrope } from 'next/font/google'
 import { HAZARD_YELLOW, HazardFrame } from '@/components/HazardFrame'
 import { GraphSceneClient } from '@/components/scene/GraphSceneClient'
 import { DefinitionCards } from '@/components/sections/DefinitionCards'
-import { DemoSection } from '@/components/sections/DemoSection'
+import { ProblemSection } from '@/components/sections/ProblemSection'
+import { ThesisSection } from '@/components/sections/ThesisSection'
 import { FutureSection } from '@/components/sections/FutureSection'
 import { PipelineSection } from '@/components/sections/PipelineSection'
 import { TileField } from '@/components/sections/TileField'
@@ -43,15 +44,13 @@ const FULLSCREEN: React.CSSProperties = {
 export default function Component() {
   const progress = useScrollProgress()
 
-  const heroOpacity = 1 - remap(progress, 0.08, 0.15, 0, 1)
-  const canvasOpacity = 1 - remap(progress, 0.18, 0.23, 0, 1)
-  const contentOpacity =
-    remap(progress, 0.24, 0.29, 0, 1) * (1 - remap(progress, 0.32, 0.35, 0, 1))
+  const heroOpacity = 1 - remap(progress, 0.05, 0.10, 0, 1)
+  const canvasOpacity = 1 - remap(progress, 0.11, 0.14, 0, 1)
 
   return (
     <div className={`relative text-white ${manrope.className}`}>
       {/* tall enough to give the choreography room to breathe */}
-      <div style={{ height: '1300vh' }}>
+      <div style={{ height: '1900vh' }}>
         <TileField progress={progress} />
 
         <div style={{ ...FULLSCREEN, zIndex: 1, opacity: canvasOpacity, transition: 'opacity 240ms linear' }}>
@@ -124,36 +123,13 @@ export default function Component() {
           </div>
         </section>
 
-        {/* ------------------------------------------------------------- content */}
-        <div
-          className="flex items-center justify-center px-6"
-          style={{
-            ...FULLSCREEN,
-            zIndex: 10,
-            opacity: contentOpacity,
-            pointerEvents: contentOpacity < 0.1 ? 'none' : 'auto',
-          }}
-        >
-          <div className="mx-auto grid w-full max-w-5xl gap-10 text-white md:grid-cols-3">
-            <Stat figure="90%" label="of workplace near misses are never reported" />
-            <Stat figure="$1B" label="paid weekly in direct workers' compensation" />
-            <Stat figure="6%" label="of events that could have killed someone were filed" />
-          </div>
-        </div>
+        <ThesisSection progress={progress} />
+        <ProblemSection progress={progress} />
+
         <DefinitionCards progress={progress} />
         <PipelineSection progress={progress} />
-        <DemoSection progress={progress} />
         <FutureSection progress={progress} />
       </div>
-    </div>
-  )
-}
-
-function Stat({ figure, label }: { figure: string; label: string }) {
-  return (
-    <div className="border-l border-white/25 pl-5">
-      <div className="text-5xl font-bold tracking-tight md:text-6xl">{figure}</div>
-      <p className="mt-3 text-sm leading-relaxed text-white/70">{label}</p>
     </div>
   )
 }

@@ -29,6 +29,7 @@ RECORDING = """
 MATCH (c:Camera {id: $camera_id})
 MERGE (r:Recording {id: $recording_id})
   ON CREATE SET r.tl_asset_id = $tl_asset_id
+SET r.source = $source
 MERGE (c)-[:RECORDED]->(r)
 """
 
@@ -54,6 +55,7 @@ def ingest_synthetic(graph: Graph) -> None:
             camera_id=camera_id,
             recording_id=rec_id,
             tl_asset_id=f"mock-{rec_id}",
+            source="synthetic",
         )
 
     graph.load_events(events)
@@ -89,7 +91,7 @@ def _manifest(paths: list[str]) -> dict[str, str]:
         return {m["filename"]: m["ground_truth_label"] for m in json.load(fh)}
 
 
-def ingest_videos(graph: Graph, paths: list[str]) -> None:
+def ingest_videos(graph: Graph, paths: list[str], source: str = "field") -> None:
     """Ingest real clips.
 
     With TL_API_KEY set this uploads, indexes and runs Pegasus. Without it, and with a
@@ -136,6 +138,7 @@ def ingest_videos(graph: Graph, paths: list[str]) -> None:
             camera_id=CAMERAS[0]["id"],
             recording_id=rec_id,
             tl_asset_id=asset_id,
+            source=source,
         )
 
         for i, ev in enumerate(events):
@@ -155,6 +158,12 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--videos", nargs="*", help="video paths or URLs")
     ap.add_argument("--reset", action="store_true", help="wipe the graph first")
+    # Two corpora live side by side. 'reference' is the curated set where a near miss is
+    # known to occur; 'field' is real footage where positives are rare and subtle. Keeping
+    # both lets us retrieve field events that resemble reference ones — which is the only
+    # honest version of "compare real footage against known near misses", since nothing
+    # here is trained.
+    ap.add_argument("--source", default="field", choices=["field", "reference"])
     args = ap.parse_args()
 
     graph = Graph()
@@ -164,7 +173,7 @@ def main() -> None:
             print("graph cleared")
 
         if args.videos:
-            ingest_videos(graph, args.videos)
+            ingest_videos(graph, args.videos, source=args.source)
         else:
             ingest_synthetic(graph)
     finally:

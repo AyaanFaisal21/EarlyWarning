@@ -233,18 +233,33 @@ def embed_segment(asset_id: str, start: float, end: float) -> list[float]:
     from twelvelabs.types import MediaSource, VideoInputRequest
 
     client = _client()
-    res = client.embed.v_2.create(
-        input_type="video",
-        model_name="marengo3.0",
-        video=VideoInputRequest(
-            media_source=MediaSource(asset_id=asset_id),
-            start_sec=start,
-            end_sec=end,
-            embedding_option=["visual", "audio"],
-            embedding_scope=["clip"],
-        ),
-    )
-    return _first_vector(res)
+
+    def _embed(**window):
+        return client.embed.v_2.create(
+            input_type="video",
+            model_name="marengo3.0",
+            video=VideoInputRequest(
+                media_source=MediaSource(asset_id=asset_id),
+                embedding_option=["visual", "audio"],
+                embedding_scope=["clip"],
+                **window,
+            ),
+        )
+
+    # Marengo requires at least 4s of media remaining after start_sec. Pegasus happily
+    # returns an event starting at 7.0s of a 10s clip, which leaves 3.0 and gets rejected:
+    #   "remaining media duration (3.00) after start offset must be at least 4.00 seconds"
+    #
+    # We cannot know the asset's duration here, so widen the window first and fall back to
+    # embedding the whole asset if the API still refuses. On the short clips this project
+    # uses, the whole asset IS the event, so the fallback costs nothing.
+    try:
+        lo = max(0.0, min(start, max(0.0, end - 4.0)))
+        return _first_vector(_embed(start_sec=lo, end_sec=max(end, lo + 4.0)))
+    except Exception as exc:
+        if "duration" not in str(exc) and "start_sec" not in str(exc):
+            raise
+        return _first_vector(_embed())
 
 
 def _first_vector(res: Any) -> list[float]:

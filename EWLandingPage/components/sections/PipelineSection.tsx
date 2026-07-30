@@ -1,6 +1,8 @@
 'use client'
 
+import { GraphSchema } from '@/components/GraphSchema'
 import { HazardFrame } from '@/components/HazardFrame'
+import { BANDS, band } from '@/lib/timeline'
 import { remap } from '@/lib/useScrollProgress'
 
 /**
@@ -15,10 +17,12 @@ import { remap } from '@/lib/useScrollProgress'
  * in sync for no gain.
  */
 
-export const PIPELINE_AT = 0.52
-const SQUEEZE_FROM = 0.56
-const SQUEEZE_TO = 0.60
-const STEP_SPAN = 0.048
+const [PIPELINE_AT, PIPELINE_END] = BANDS.pipeline
+const SQUEEZE_FROM = PIPELINE_AT + 0.03
+const SQUEEZE_TO = PIPELINE_AT + 0.07
+// Divide the remaining scroll evenly so the last step always finishes before the section
+// starts fading, however the band is later retuned.
+const STEP_SPAN = (PIPELINE_END - 0.04 - SQUEEZE_TO) / 4
 
 type Step = {
   id: string
@@ -29,12 +33,41 @@ type Step = {
   handoff: string
   /** Why this tool and not something simpler. The question a judge asks first. */
   why: string
+  /**
+   * The card that slides over the description partway through each step.
+   *
+   * `code` is verbatim from the repo — a paraphrased snippet is a liability if anyone
+   * reads it closely. `images` is the slot for stills and graph renders; when present the
+   * card shows those instead.
+   */
+  code: { lang: string; body: string }
+  /** Real footage. Shown instead of code when present. */
+  video?: { src: string; caption: string }
+  /** Two clips that resolve to the same fingerprint. */
+  pair?: { left: { src: string; label: string }; right: { src: string; label: string }; fingerprint: string; caption: string }
+  /** The schema diagram, drawn in-palette rather than screenshotted. */
+  graphic?: 'schema'
   detail: string[]
 }
 
 const STEPS: Step[] = [
   {
     id: 'watch',
+    video: {
+      src: '/clips/forklift-nearmiss.mp4',
+      caption:
+        'Extracted from this clip: vehicle_pedestrian_proximity · sif fatal · proximity under_1m — "a pedestrian worker stands in the path of a reversing forklift".',
+    },
+    code: { lang: 'python', body: `result = client.analyze(
+    model_name="pegasus1.5",
+    video=VideoContext_AssetId(asset_id=asset_id),
+    prompt_v_2=AnalyzePromptV2(input_text=PROMPT),
+    response_format=SyncResponseFormat(
+        type="json_schema",
+        json_schema=EVENT_SCHEMA,   # every field enum-constrained
+    ),
+)
+return json.loads(result.data)["events"]` },
     label: 'WATCH',
     tool: 'TwelveLabs · Pegasus 1.5',
     call: 'analyze(video, response_format=json_schema)',
@@ -49,6 +82,22 @@ const STEPS: Step[] = [
   },
   {
     id: 'structure',
+    pair: {
+      left:  { src: '/clips/real-cctv.mp4',    label: 'real CCTV · Turkish factory' },
+      right: { src: '/clips/sim-nearmiss.mp4', label: 'simulation · NVIDIA PhysicalAI' },
+      fingerprint: '5649abdb63e19bdf',
+      caption:
+        'Different cameras, different resolution, different continent — one of them is not even real. Marengo embeddings could not bridge them: within a corpus they sit at 0.98 similarity, across corpora 0.88. The fingerprint does, because it hashes what the extractor found, not what the frame looked like. 17 events share this one.',
+    },
+    code: { lang: 'python', body: `def fingerprint(event) -> str:
+    """The grouping key: a subgraph signature, not a
+    point in embedding space."""
+    parts = [
+        event["hazard_type"],
+        ",".join(sorted(event["missing_controls"])),
+        ",".join(sorted(event["actors"])),
+    ]
+    return sha1("|".join(parts).encode()).hexdigest()[:16]` },
     label: 'STRUCTURE',
     tool: 'no vendor — 12 lines',
     call: 'sha1(hazard | sorted(controls) | sorted(actors))',
@@ -63,6 +112,14 @@ const STEPS: Step[] = [
   },
   {
     id: 'connect',
+    graphic: 'schema',
+    code: { lang: 'cypher', body: `// the reporting gap — a negation over a relationship
+MATCH (p:Pattern)<-[:INSTANCE_OF]-(e:Event)
+OPTIONAL MATCH (e)-[:GENERATED]->(r:Report)
+WITH p, count(e) AS seen, count(r) AS filed
+WHERE filed = 0 AND seen >= 3
+RETURN p.title AS pattern, seen
+ORDER BY seen DESC` },
     label: 'CONNECT',
     tool: 'Neo4j · Aura',
     call: 'MERGE (p:Pattern {fingerprint}) ← INSTANCE_OF',
@@ -77,6 +134,16 @@ const STEPS: Step[] = [
   },
   {
     id: 'explain',
+    code: { lang: 'python', body: `class PatternBrief(BaseModel):
+    title: str
+    root_cause_hypothesis: str
+    why_unreported: str
+    recommended_action: str
+    confidence: Literal["low", "medium", "high"]
+
+# input is a serialized subgraph, never a video frame
+payload = render(pattern_context(graph, fingerprint))
+brief = ask(agent, payload, PatternBrief)` },
     label: 'EXPLAIN',
     tool: 'OpenAI gpt-5.5 · Strands',
     aws: true,
@@ -92,18 +159,40 @@ const STEPS: Step[] = [
   },
 ]
 
-function activeIndex(progress: number) {
-  const i = Math.floor((progress - SQUEEZE_TO) / STEP_SPAN)
-  return Math.min(STEPS.length - 1, Math.max(0, i))
+/**
+ * Where we are in the step sequence, as a continuous value.
+ *
+ * `index` is which step to show; `phase` is how far through it we are, 0 to 1. Rendering
+ * straight off Math.floor makes the panel swap instantly at each boundary, which reads as a
+ * glitch rather than a transition. Keeping the fractional part lets the panel dissolve out
+ * and back in across the seam.
+ */
+function stepPosition(progress: number) {
+  const raw = (progress - SQUEEZE_TO) / STEP_SPAN
+  const clamped = Math.min(STEPS.length - 1e-4, Math.max(0, raw))
+  const index = Math.floor(clamped)
+  return { index, phase: clamped - index }
 }
+
+/** Trapezoid: fades in over the first slice of a step, out over the last. */
+function crossfade(phase: number, ramp = 0.18) {
+  return Math.max(0, Math.min(1, phase / ramp, (1 - phase) / ramp))
+}
+
+// Each step is two beats. Read the argument first, then the card carrying the evidence
+// slides up over it. Splitting them this way means neither competes with the other for
+// attention — a code block sitting beside prose gets skimmed past.
+const CARD_IN = 0.42
+const CARD_FULL = 0.62
 
 export function PipelineSection({ progress }: { progress: number }) {
   // Hands the stage to the demo once the last step has had its turn.
-  const sectionOpacity =
-    remap(progress, PIPELINE_AT - 0.03, PIPELINE_AT, 0, 1) *
-    (1 - remap(progress, 0.79, 0.82, 0, 1))
+  const sectionOpacity = band(progress, 'pipeline')
   const squeeze = remap(progress, SQUEEZE_FROM, SQUEEZE_TO, 0, 1)
-  const active = activeIndex(progress)
+  const { index: active, phase } = stepPosition(progress)
+  const panel = crossfade(phase)
+  const card = remap(phase, CARD_IN, CARD_FULL, 0, 1)
+  const step = STEPS[active]
 
   // Terminal is the whole stage at first, then yields to the detail panel.
   const terminalWidth = 640 - squeeze * 330
@@ -159,7 +248,7 @@ export function PipelineSection({ progress }: { progress: number }) {
 
             <div className="px-4 py-4">
               {STEPS.map((step, i) => {
-                const isActive = squeeze > 0.5 && i === active
+                const isActive = squeeze > 0.5 && i === active && phase > 0.06
                 const row = (
                   <div
                     style={{
@@ -249,10 +338,21 @@ export function PipelineSection({ progress }: { progress: number }) {
           style={{
             flex: squeeze,
             minWidth: 0,
+            position: 'relative',
+            // a definite height so the card can cover the description exactly rather than
+            // resizing the row as it arrives
+            minHeight: 420,
             opacity: squeeze,
             overflow: 'hidden',
           }}
         >
+          {/* ---- beat one: the argument ---- */}
+          <div
+            style={{
+              opacity: panel * (1 - card * 0.9),
+              transform: `translate3d(0, ${(1 - panel) * 14 - card * 18}px, 0)`,
+            }}
+          >
           <p className="text-xs uppercase tracking-[0.22em] text-white/35">
             Step {active + 1} of {STEPS.length}
           </p>
@@ -260,18 +360,6 @@ export function PipelineSection({ progress }: { progress: number }) {
             {STEPS[active].label}
           </h3>
           <p className="mt-2 text-sm text-white/45">{STEPS[active].tool}</p>
-
-          <div
-            className="mt-5 rounded-lg px-4 py-3 text-[12px] text-white/70"
-            style={{
-              background: 'rgba(255,255,255,.05)',
-              border: '1px solid rgba(255,255,255,.1)',
-              fontFamily:
-                'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace',
-            }}
-          >
-            {STEPS[active].call}
-          </div>
 
           <div
             className="mt-6 rounded-lg px-5 py-4"
@@ -288,7 +376,7 @@ export function PipelineSection({ progress }: { progress: number }) {
             </p>
           </div>
 
-          <ul className="mt-6 space-y-4">
+          <ul className="mt-6 space-y-3">
             {STEPS[active].detail.map((line) => (
               <li
                 key={line}
@@ -299,6 +387,102 @@ export function PipelineSection({ progress }: { progress: number }) {
               </li>
             ))}
           </ul>
+          </div>
+
+          {/* ---- beat two: the card slides over ---- */}
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              display: 'flex',
+              alignItems: 'center',
+              opacity: card * panel,
+              transform: `translate3d(0, ${(1 - card) * 46}px, 0)`,
+              pointerEvents: card < 0.5 ? 'none' : 'auto',
+            }}
+          >
+            <HazardFrame thickness={3} radius={12} stripe={9} style={{ width: '100%' }}>
+              <div style={{ background: '#0d0d0d', padding: '18px 20px' }}>
+                <div className="mb-3 flex items-center justify-between">
+                  <span className="text-[10px] uppercase tracking-[0.2em] text-white/35">
+                    {step.pair
+                      ? 'same fingerprint, different worlds'
+                      : step.video
+                      ? 'real footage · NVIDIA PhysicalAI'
+                      : step.graphic
+                        ? 'what the graph actually looks like'
+                        : `${step.code.lang} · from the repo`}
+                  </span>
+                  <span className="text-[10px] text-[#f2c200]">{step.label}</span>
+                </div>
+
+                {step.pair ? (
+                  <div>
+                    <div className="grid grid-cols-2 gap-3">
+                      {[step.pair.left, step.pair.right].map((v) => (
+                        <figure key={v.src} style={{ margin: 0 }}>
+                          <video
+                            src={v.src}
+                            autoPlay loop muted playsInline
+                            style={{ width: '100%', borderRadius: 6, display: 'block' }}
+                          />
+                          <figcaption className="mt-2 text-[10.5px] text-white/45">
+                            {v.label}
+                          </figcaption>
+                        </figure>
+                      ))}
+                    </div>
+                    <div
+                      className="mt-3 rounded-md px-3 py-2 text-center text-[12px]"
+                      style={{ background: 'rgba(242,194,0,.1)', color: '#f2c200',
+                               fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace' }}
+                    >
+                      fingerprint {step.pair.fingerprint}
+                    </div>
+                    <p className="mt-3 text-[11.5px] leading-relaxed text-white/50">
+                      {step.pair.caption}
+                    </p>
+                  </div>
+                ) : step.video ? (
+                  <figure style={{ margin: 0 }}>
+                    <video
+                      key={step.video.src}
+                      src={step.video.src}
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      style={{ width: '100%', borderRadius: 6, display: 'block' }}
+                    />
+                    <figcaption className="mt-3 text-[11.5px] leading-relaxed text-white/50">
+                      {step.video.caption}
+                    </figcaption>
+                  </figure>
+                ) : step.graphic === 'schema' ? (
+                  <div>
+                    <GraphSchema height={230} />
+                    <p className="mt-2 text-[11.5px] leading-relaxed text-white/50">
+                      Every question starts at an Event and walks outward.
+                      <span style={{ color: '#f2c200' }}> MISSING_CONTROL</span> is the edge
+                      that carries absence — which is why this is a graph and not a table.
+                    </p>
+                  </div>
+                ) : (
+                  <pre
+                    className="overflow-x-auto text-[11.5px] leading-relaxed"
+                    style={{
+                      color: 'rgba(255,255,255,.8)',
+                      fontFamily:
+                        'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace',
+                      margin: 0,
+                    }}
+                  >
+                    <code>{step.code.body}</code>
+                  </pre>
+                )}
+              </div>
+            </HazardFrame>
+          </div>
         </div>
       </div>
     </div>
