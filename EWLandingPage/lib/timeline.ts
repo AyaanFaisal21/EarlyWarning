@@ -18,9 +18,9 @@ export const FADE = 0.03
 
 export const BANDS = {
   //            enter  exit
-  thesis:   [0.13, 0.30] as const,
-  problem:  [0.32, 0.45] as const,
-  cards:    [0.47, 0.58] as const,
+  problem:  [0.13, 0.28] as const,
+  cards:    [0.30, 0.42] as const,
+  thesis:   [0.44, 0.56] as const,
   pipeline: [0.60, 0.88] as const,
   future:   [0.90, 1.01] as const,
 }
@@ -46,6 +46,19 @@ export function holdsUntil(name: BandName) {
  * readable. If a caller asks for a reveal that would land during the fade-out, it is pulled
  * earlier rather than silently rendering something nobody can see.
  */
+/**
+ * Scroll to the moment a section is fully in view.
+ *
+ * Nav links target a scroll offset rather than an element, because every section is
+ * position:fixed and driven by scroll progress — there is no element in the flow to jump
+ * to. Aims slightly past `enter` so the section has finished fading when you arrive.
+ */
+export function scrollToBand(name: BandName) {
+  const [enter] = BANDS[name]
+  const max = document.documentElement.scrollHeight - window.innerHeight
+  window.scrollTo({ top: max * (enter + FADE), behavior: 'smooth' })
+}
+
 export function reveal(progress: number, name: BandName, at: number, ramp = 0.02) {
   const latest = holdsUntil(name) - ramp - 0.01
   const start = Math.min(at, latest)

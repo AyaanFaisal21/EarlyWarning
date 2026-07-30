@@ -17,7 +17,7 @@ Your wording, tightened — nothing here is a claim we can't defend.
 >
 > In 2024 alone, **five thousand and seventy** people went to work and didn't come home.
 
-**[scroll: thesis]**
+**[scroll: numbers]**
 
 > The National Safety Council says three quarters of workplace accidents were preceded by a
 > near miss. A warning. And **ninety percent of those warnings are never reported** —
@@ -26,7 +26,7 @@ Your wording, tightened — nothing here is a claim we can't defend.
 > That's what a near miss is. An event where nobody gets hurt, but one that often comes
 > before an accident.
 
-**[scroll: numbers]**
+**[scroll: cards]**
 
 > And it's getting worse. Pedestrians struck by workplace vehicles are up **nineteen
 > percent** — a category notorious for unreported near misses. If you almost get hit,
@@ -35,7 +35,7 @@ Your wording, tightened — nothing here is a claim we can't defend.
 > Meanwhile autonomous machinery is arriving on those same floors, causing the same near
 > misses, reporting none of them — leaving only footage.
 
-**[scroll: cards → pipeline]**
+**[scroll: the problem, and what it costs]**
 
 > That's right. Footage is everywhere. It's just that nobody can watch it, and nobody knows
 > what to look for.

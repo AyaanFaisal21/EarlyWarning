@@ -1,7 +1,7 @@
 'use client'
 
 import { HazardFrame } from '@/components/HazardFrame'
-import { band, reveal } from '@/lib/timeline'
+import { BANDS, band, reveal } from '@/lib/timeline'
 
 /**
  * The whole argument in three lines, before a single number.
@@ -20,7 +20,9 @@ import { band, reveal } from '@/lib/timeline'
  * payoff there.
  */
 
-const AT = 0.17
+// Derived, not pinned. This was hard-coded to the old band start, so reordering
+// the sections would have stranded every reveal mid-fade.
+const AT = BANDS.thesis[0] + 0.04
 
 const LINES = [
   {

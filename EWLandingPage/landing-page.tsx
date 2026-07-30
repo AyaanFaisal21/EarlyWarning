@@ -10,6 +10,7 @@ import { ThesisSection } from '@/components/sections/ThesisSection'
 import { FutureSection } from '@/components/sections/FutureSection'
 import { PipelineSection } from '@/components/sections/PipelineSection'
 import { TileField } from '@/components/sections/TileField'
+import { scrollToBand } from '@/lib/timeline'
 import { remap, useScrollProgress } from '@/lib/useScrollProgress'
 
 const manrope = Manrope({ subsets: ['latin'] })
@@ -92,9 +93,21 @@ export default function Component() {
                 <span className="text-lg font-bold tracking-tight">Early Warning</span>
               </a>
               <ul className="hidden gap-8 text-sm text-white/70 md:flex">
-                <li><a href="#problem" className="transition-colors hover:text-white">Problem</a></li>
-                <li><a href="#how" className="transition-colors hover:text-white">How it works</a></li>
-                <li><a href="#graph" className="transition-colors hover:text-white">The graph</a></li>
+                {([
+                  ['Problem', 'thesis'],
+                  ['How it works', 'pipeline'],
+                  ['What\u2019s next', 'future'],
+                ] as const).map(([label, target]) => (
+                  <li key={label}>
+                    <button
+                      type="button"
+                      onClick={() => scrollToBand(target)}
+                      className="transition-colors hover:text-white"
+                    >
+                      {label}
+                    </button>
+                  </li>
+                ))}
               </ul>
             </nav>
           </HazardFrame>
