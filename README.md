@@ -184,6 +184,43 @@ That inversion is the entire thesis: **reporting collapses exactly where severit
 
 ---
 
+## The pitch site
+
+`EWLandingPage/` is a Next.js app that walks the whole argument: hero over a 3D grid, the
+underreporting numbers, the near-miss / incident / accident ladder, the four-step pipeline
+with a per-step "why this tool", a demo slot, and the automation closer.
+
+```bash
+cd EWLandingPage && npm install && npm run dev
+```
+
+Everything is driven off one normalised scroll value in `lib/useScrollProgress.ts`, so the
+camera dolly, the copy fades, and the section reveals stay in lockstep. Timeline:
+
+| Scroll | Section |
+|---|---|
+| 0.00 – 0.18 | camera descends into the grid, lines darken to black |
+| 0.24 – 0.35 | the three statistics |
+| 0.37 – 0.50 | accident → incident → near miss, revealed in reverse |
+| 0.52 – 0.83 | pipeline: terminal centred, squeezing into a sidebar |
+| 0.82 – 0.92 | demo video slot |
+| 0.92 – 1.00 | why this gets harder |
+
+Drop a recording at `EWLandingPage/public/demo.mp4` and the demo section plays it.
+
+### Deploying to Vercel
+
+Import the repo and **set the root directory to `EWLandingPage`** — the Next.js app is not
+at the repo root. Framework preset auto-detects; no environment variables are needed, since
+the site is static and talks to nothing.
+
+⚠️ **New files need a dev-server restart.** Next's fast refresh repeatedly served stale
+bundles during development — a component would compile cleanly and simply not render. If a
+change appears not to have applied, `rm -rf EWLandingPage/.next` and restart before
+assuming it is broken.
+
+---
+
 ## Honest limitations
 
 - **The corpus in `src/seed.py` is synthetic** and deliberately constructed to contain a
@@ -222,5 +259,7 @@ That inversion is the entire thesis: **reporting collapses exactly where severit
 | [schema.cypher](schema.cypher) | Constraints, indexes, 512-d vector index |
 | [queries.cypher](queries.cypher) | The five demo queries |
 | [DEMO.md](DEMO.md) | Run sheet |
+| [src/fetch_nvidia.py](src/fetch_nvidia.py) | Pull synchronised camera views of one near-miss run |
+| [EWLandingPage/](EWLandingPage) | The pitch site — Next.js, scroll-driven |
 | [SOURCES.md](SOURCES.md) | Footage sources, licences, what was rejected |
 | [SAFETY_EVIDENCE.md](SAFETY_EVIDENCE.md) | Every statistic, with what's citable and what isn't |
