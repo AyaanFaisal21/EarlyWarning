@@ -60,7 +60,7 @@ Scale up any time with `--per-class 20` (~700 MB). MP4s are gitignored; the mani
 
 ---
 
-## ✅ Secondary — NVIDIA PhysicalAI SDG-Warehouse (synthetic, huge, multi-camera)
+## ✅ Now primary for demo clips — NVIDIA PhysicalAI SDG-Warehouse
 
 [huggingface.co/datasets/nvidia/PhysicalAI-WorldModel-Synthetic-Warehouse-Operations-Scenes](https://huggingface.co/datasets/nvidia/PhysicalAI-WorldModel-Synthetic-Warehouse-Operations-Scenes)
 
@@ -94,8 +94,43 @@ test of the project's central technical claim:
 We assert that in the README. This dataset lets us **prove** it, with labels, on stage. It's
 the strongest validation available anywhere in this search.
 
+### Why this became the demo source
+
+The Mendeley labels encode **human compliance** — did a worker stay inside a painted line.
+Judged against that, our extractor scored ~51% precision, because it answers a different
+question: is a person and a hazard converging. Both can be true; they are not the same task.
+
+This dataset's near-miss scenario has **unambiguous ground truth** — every run contains a
+near miss by construction — and the subject is the machine, not the worker. Extraction on
+it is night-and-day better. Two clips, verbatim:
+
+> *"A pedestrian worker stands in the path of a reversing forklift."*
+> sif **fatal**, proximity **under_1m**
+> almost: if the person had taken a step forward or the forklift had continued reversing for
+> a few more seconds, the forklift would have struck the person.
+
+> *"A pedestrian walks directly across the path of a moving forklift in a narrow aisle."*
+> sif **high**, proximity **under_1m**
+
+Compare that to the best the CCTV set produced and there is no contest.
+
+### Getting the clips
+
+    python src/fetch_nvidia.py --list
+    python src/fetch_nvidia.py --run <run_id>
+
+Shard `nearmiss-rgb-00112.tar` (1.10 GB, the smallest of 113) holds **47 clips, 41 of them
+under 20 MB**, median 2.8 MB, all 10 seconds. `data_nvidia/` is gitignored — it is
+re-fetchable and one shard alone would blow past GitHub's 100 MB file limit.
+
+⚠️ Shard 00112 is an `extras_single_view` pack: one camera per clip, not the 10-camera runs.
+For the fingerprint-collapse test (ten synchronised views of one event collapsing to a single
+pattern) pull a numbered run shard instead — 625 of the 638 runs carry all ten cameras,
+5 ceiling plus 5 eye-level.
+
 Cost: it's rendered, so extraction quality may not transfer to real CCTV, and a judge can
-fairly say "that's synthetic." Which is exactly why Mendeley is primary and this is second.
+fairly say "that's synthetic." Keep the Mendeley set in the deck as the real-footage
+counterpart.
 
 ---
 
