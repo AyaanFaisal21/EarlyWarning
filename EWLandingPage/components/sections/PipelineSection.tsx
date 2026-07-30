@@ -87,7 +87,7 @@ return json.loads(result.data)["events"]` },
       right: { src: '/clips/sim-nearmiss.mp4', label: 'simulation · NVIDIA PhysicalAI' },
       fingerprint: '5649abdb63e19bdf',
       caption:
-        'Different cameras, different resolution, different continent — one of them is not even real. Marengo embeddings could not bridge them: within a corpus they sit at 0.98 similarity, across corpora 0.88. The fingerprint does, because it hashes what the extractor found, not what the frame looked like. 17 events share this one.',
+        'Left: a real factory, a forklift swinging round with a load while someone walks past. Right: a rendered simulation on another continent. Both extracted to the same hazard, the same three absent controls — segregated_walkway, floor_marking, audible_reversing_alarm — so both hash to the same pattern. Marengo embeddings could not bridge these: within a corpus events sit at 0.98 similarity, across corpora 0.88. The fingerprint does, because it hashes what the extractor found rather than what the frame looked like.',
     },
     code: { lang: 'python', body: `def fingerprint(event) -> str:
     """The grouping key: a subgraph signature, not a
