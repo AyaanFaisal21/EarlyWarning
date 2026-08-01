@@ -17,7 +17,7 @@ and each pipeline step now ends with why-this-tool plus the file to open.
 >
 > In 2024 alone, **five thousand and seventy** people went to work and didn't come home.
 
-**[scroll: numbers]**
+**[scroll: the problem, and what it costs]**
 
 > Near misses are a warning. And **ninety percent of those warnings are never reported** —
 > because to the person it happened to, nothing really happened.
@@ -30,7 +30,7 @@ and each pipeline step now ends with why-this-tool plus the file to open.
 
 > A near miss is an event where nobody gets hurt — but somebody could have.
 
-**[scroll: the problem, and what it costs]**
+**[scroll: numbers]**
 
 > Meanwhile autonomous machinery is arriving on those same floors, causing the same near
 > misses, reporting none of them — leaving only footage.

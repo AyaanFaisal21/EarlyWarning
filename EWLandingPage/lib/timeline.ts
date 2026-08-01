@@ -18,9 +18,9 @@ export const FADE = 0.03
 
 export const BANDS = {
   //            enter  exit
-  problem:  [0.13, 0.28] as const,
+  thesis:   [0.13, 0.28] as const,
   cards:    [0.30, 0.42] as const,
-  thesis:   [0.44, 0.56] as const,
+  problem:  [0.44, 0.56] as const,
   pipeline: [0.60, 0.88] as const,
   future:   [0.90, 1.01] as const,
 }
